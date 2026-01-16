@@ -2,7 +2,10 @@
   "name": "panel-buttons",
   "displayName": "Panel Buttons",
   "description": "Add a panel with buttons to execute terminal commands. Everything can be pre-configured per-user or per-project via settings.",
-  "version": "0.0.1",
+  "version": "0.1.0",
+  "repository": {
+    "url": "https://github.com/matthieucan/code-panel-buttons"
+  },
   "engines": {
     "vscode": "^1.108.0"
   },
