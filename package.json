@@ -1,10 +1,10 @@
 {
   "name": "panel-buttons",
-  "displayName": "panel-buttons",
+  "displayName": "Panel Buttons",
   "description": "Add a panel with buttons to execute terminal commands. Everything can be pre-configured per-user or per-project via settings.",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.108.1"
+    "vscode": "^1.108.0"
   },
   "categories": [
     "Other"
@@ -12,12 +12,83 @@
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "panel-buttons",
+          "title": "Panel Buttons",
+          "icon": "resources/panel-buttons.svg"
+        }
+      ]
+    },
+    "views": {
+      "panel-buttons": [
+        {
+          "id": "panelButtonsView",
+          "name": "Buttons"
+        }
+      ]
+    },
     "commands": [
       {
-        "command": "panel-buttons.helloWorld",
-        "title": "Hello World"
+        "command": "panel-buttons.executeCommand",
+        "title": "Execute Command",
+        "icon": "$(play)"
+      },
+      {
+        "command": "panel-buttons.refresh",
+        "title": "Refresh Panel Buttons",
+        "icon": "$(refresh)"
       }
-    ]
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "panel-buttons.refresh",
+          "when": "view == panelButtonsView",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Panel Buttons",
+      "properties": {
+        "panelButtons.buttons": {
+          "type": "array",
+          "default": [],
+          "description": "Buttons to display in the panel. Buttons with the same 'section' property are grouped together.",
+          "items": {
+            "type": "object",
+            "required": [
+              "title",
+              "command"
+            ],
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Display title for the button"
+              },
+              "command": {
+                "type": "string",
+                "description": "Terminal command to execute when the button is clicked"
+              },
+              "section": {
+                "type": "string",
+                "description": "Section name to group this button under (optional)"
+              },
+              "icon": {
+                "type": "string",
+                "description": "Icon for the button (VS Code codicon name, e.g., 'play')"
+              },
+              "tooltip": {
+                "type": "string",
+                "description": "Tooltip text shown on hover"
+              }
+            }
+          }
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "yarn run package",

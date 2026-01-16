@@ -1,71 +1,115 @@
-# panel-buttons README
+# Panel Buttons
 
-This is the README for your extension "panel-buttons". After writing up a brief description, we recommend including the following sections.
+A VS Code extension that adds a customizable panel in the sidebar with buttons to execute terminal commands. Perfect for frequently used commands, build scripts, and project-specific workflows.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- **Sidebar Panel**: A dedicated panel in the activity bar for quick access to your buttons
+- **Configurable Buttons**: Define buttons with custom titles, icons, and terminal commands
+- **Auto-Sections**: Buttons with the same `section` property are automatically grouped together
+- **User & Workspace Settings**: Configure buttons at the user level (global) or workspace level (project-specific)
+- **Settings Merging**: User and workspace settings are intelligently merged, allowing you to have common buttons plus project-specific ones
 
-For example if there is an image subfolder under your extension project workspace:
+## Configuration
 
-\!\[feature X\]\(images/feature-x.png\)
+Configure the extension via VS Code settings (`settings.json`). You can use User Settings for global buttons or Workspace Settings for project-specific buttons.
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+### Settings
 
-## Requirements
+#### `panelButtons.buttons`
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+Define buttons to display in the panel. Each button has:
 
-## Extension Settings
+| Property  | Type   | Required | Description                                        |
+| --------- | ------ | -------- | -------------------------------------------------- |
+| `title`   | string | Yes      | Display title for the button                       |
+| `command` | string | Yes      | Terminal command to execute when clicked           |
+| `section` | string | No       | Section name to group this button under            |
+| `icon`    | string | No       | VS Code codicon name (e.g., `play`, `debug-start`) |
+| `tooltip` | string | No       | Tooltip text shown on hover                        |
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+### Example Configuration
 
-For example:
+```json
+{
+  "panelButtons.buttons": [
+    {
+      "section": "Build",
+      "title": "Install Dependencies",
+      "command": "npm install",
+      "icon": "cloud-download",
+      "tooltip": "Install all npm dependencies"
+    },
+    {
+      "section": "Build",
+      "title": "Build",
+      "command": "npm run build",
+      "icon": "package"
+    },
+    {
+      "section": "Testing",
+      "title": "Run Tests",
+      "command": "npm test",
+      "icon": "play"
+    },
+    {
+      "section": "Testing",
+      "title": "Test (Watch)",
+      "command": "npm run test:watch",
+      "icon": "eye"
+    },
+    {
+      "section": "Git",
+      "title": "Git Status",
+      "command": "git status",
+      "icon": "git-branch",
+      "tooltip": "Show git status"
+    }
+  ]
+}
+```
 
-This extension contributes the following settings:
+Buttons with the same `section` value are automatically grouped together. Buttons without a `section` appear at the root level.
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+### User vs Workspace Settings
+
+- **User Settings**: Available in all workspaces. Great for common commands you use everywhere.
+- **Workspace Settings**: Specific to a project. Perfect for project-specific build commands.
+
+When both are configured, they are merged:
+
+- Buttons from both sources are combined
+- If a button has the same `title` AND `command` in both, the workspace version takes precedence
+
+## Commands
+
+| Command                  | Description                                        |
+| ------------------------ | -------------------------------------------------- |
+| `Panel Buttons: Refresh` | Refresh the panel to reflect configuration changes |
+
+## Icons
+
+This extension uses VS Code's built-in [codicons](https://code.visualstudio.com/api/references/icons-in-labels). Common icons include:
+
+- `play`, `debug-start`, `debug-stop`
+- `package`, `folder`, `file`
+- `gear`, `tools`, `wrench`
+- `beaker`, `bug`, `check`
+- `terminal`, `console`
+- `cloud-download`, `cloud-upload`
+- `git-branch`, `git-commit`, `git-merge`
 
 ## Known Issues
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+None at this time.
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
+### 0.1.0
 
-### 1.0.0
+Initial release:
 
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+- Sidebar panel with configurable buttons
+- Section grouping support
+- User and workspace settings merging
+- Terminal command execution

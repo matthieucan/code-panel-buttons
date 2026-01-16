@@ -1,26 +1,55 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
+import { ConfigurationService } from "./configurationService";
+import { TerminalService } from "./terminalService";
+import { ButtonsTreeDataProvider } from "./treeDataProvider";
+import { Button } from "./models";
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+  console.log("Panel Buttons extension is now active");
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "panel-buttons" is now active!');
+  // Create services
+  const configService = new ConfigurationService();
+  const terminalService = new TerminalService();
+  const treeDataProvider = new ButtonsTreeDataProvider(configService);
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('panel-buttons.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from panel-buttons!');
-	});
+  // Register the tree data provider
+  const treeView = vscode.window.createTreeView("panelButtonsView", {
+    treeDataProvider: treeDataProvider,
+    showCollapseAll: true,
+  });
 
-	context.subscriptions.push(disposable);
+  // Register command to execute terminal commands
+  const executeCommand = vscode.commands.registerCommand(
+    "panel-buttons.executeCommand",
+    (button: Button) => {
+      if (button && button.command) {
+        terminalService.executeCommand(button.command);
+      }
+    },
+  );
+
+  // Register refresh command
+  const refreshCommand = vscode.commands.registerCommand(
+    "panel-buttons.refresh",
+    () => {
+      treeDataProvider.refresh();
+    },
+  );
+
+  // Listen for configuration changes
+  const configChangeDisposable = configService.onConfigurationChange(() => {
+    treeDataProvider.refresh();
+  });
+
+  // Add disposables to context
+  context.subscriptions.push(
+    treeView,
+    executeCommand,
+    refreshCommand,
+    configChangeDisposable,
+    { dispose: () => terminalService.dispose() },
+    { dispose: () => treeDataProvider.dispose() },
+  );
 }
 
-// This method is called when your extension is deactivated
 export function deactivate() {}
